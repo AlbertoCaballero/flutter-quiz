@@ -1,6 +1,6 @@
 # A minimal quiz app
 
-![Sample image of the app](https://github.com/AlbertoCaballero/flutter-quiz/assets/sample.jpg)
+![Sample image of the app](https://github.com/AlbertoCaballero/flutter-quiz/blob/master/assets/sample.jpg)
 
 # Disclaimer
 
