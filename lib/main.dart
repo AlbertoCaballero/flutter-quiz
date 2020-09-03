@@ -1,4 +1,7 @@
+import 'package:platform_alert_dialog/platform_alert_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:quizzler/QuestionBank.dart';
+import 'Question.dart';
 
 void main() => runApp(Quizzler());
 
@@ -25,6 +28,9 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  int index = 0;
+  List<Widget> scoreKeeper = [];
+  List<Question> questions = QuestionBank.questions;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +43,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                questions[index].question,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -52,7 +58,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(15.0),
             child: FlatButton(
               textColor: Colors.white,
-              color: Colors.green,
+              color: Colors.blue,
               child: Text(
                 'True',
                 style: TextStyle(
@@ -62,6 +68,9 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
+                setState(() {
+                  chekAnswer(true);
+                });
               },
             ),
           ),
@@ -70,7 +79,7 @@ class _QuizPageState extends State<QuizPage> {
           child: Padding(
             padding: EdgeInsets.all(15.0),
             child: FlatButton(
-              color: Colors.red,
+              color: Colors.grey,
               child: Text(
                 'False',
                 style: TextStyle(
@@ -80,12 +89,78 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
+                setState(() {
+                  chekAnswer(false);
+                });
               },
             ),
           ),
         ),
-        //TODO: Add a Row here as your score keeper
+        Row(
+          children: scoreKeeper,
+          mainAxisAlignment: MainAxisAlignment.center,
+        ),
       ],
+    );
+  }
+
+  Icon addCheck() {
+    return Icon(Icons.check, color: Colors.cyan);
+  }
+
+  Icon addCross() {
+    return Icon(Icons.close, color: Colors.grey);
+  }
+
+  void chekAnswer(bool answer) {
+    if (questions[index].answer == answer)
+      updateScoreKeeper(addCheck());
+    else
+      updateScoreKeeper(addCross());
+
+    index++;
+    if (index == questions.length) index = 0;
+  }
+
+  void updateScoreKeeper(Icon icon) {
+    // Check for space in score bar and update acordingly
+    if (scoreKeeper.length >= questions.length) {
+      alertEnding();
+    } else {
+      scoreKeeper.add(icon);
+    }
+  }
+
+  void alertEnding() {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return PlatformAlertDialog(
+          title: Text('End of the game!'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Congratulations, you have reached the end of the game.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            PlatformDialogAction(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            PlatformDialogAction(
+              child: Text('Finish'),
+              actionType: ActionType.Preferred,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
